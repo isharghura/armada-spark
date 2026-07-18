@@ -151,7 +151,7 @@ export CLUSTER_CA_FILE=e2e/ca.crt
 - You should be able to now verify the armada-spark configuration by running the E2E tests:
 
 ```
-$ ./scripts/dev-e2e.sh
+$ ./scripts/dev-e2e.py
 ```
 
 This will save its output to `e2e-test.log` for further debugging.
@@ -313,6 +313,6 @@ Quick reference:
 mvn test                 # Run unit tests
 mvn spotless:check       # Check formatting
 mvn spotless:apply       # Auto-fix formatting
-scripts/dev-e2e.sh       # Run E2E tests (requires a running Armada cluster)
+scripts/dev-e2e.py       # Run E2E tests (requires a running Armada cluster)
 ```
 
