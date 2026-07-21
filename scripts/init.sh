@@ -441,4 +441,3 @@ if [ ${#S3_CONF[@]} -gt 0 ]; then
         --conf spark.history.fs.logDirectory=$ARMADA_EVENT_LOG_DIR
     )
 fi
-
