@@ -331,7 +331,7 @@
 
     <!-- Build Plugins -->
     <build>
-        <finalName>${project.artifactId}_${scala.binary.version}-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
