@@ -4,7 +4,7 @@ description: Github Action to run end-to-end tests against a Spark and Scala ver
 
 inputs:
   spark_version:
-    description: Spark version to build against, e.g. "3.5.5" or "4.1.0-SNAPSHOT"
+    description: Spark version to build against, e.g. "3.5.5"
     required: true
   scala_version:
     description: Scala version to build with, e.g. "2.13.8"
