@@ -280,7 +280,7 @@ else
     INCLUDE_PYTHON=true
 fi
 
-# 1. Compute MAVEN_PROFILES and PROFILES_ARG immediately
+# 1 Validate Spark version and set profile
 if [[ "${SPARK_VERSION-}" == "3.3.4" ]]; then
   SPARK_PROFILE="spark3.3.4"
 elif [[ "${SPARK_VERSION-}" == "3.5.5" ]]; then
@@ -291,7 +291,19 @@ else
   safe_abort "Error: Unsupported SPARK_VERSION '${SPARK_VERSION}'. Supported versions are: 3.3.4, 3.5.5, 4.1.1."
 fi
 
-SCALA_PROFILE="scala${SCALA_VERSION}"
+# 1.5 Validate Scala version and set profile
+if [[ "${SCALA_VERSION-}" == "2.12.15" ]]; then
+  SCALA_PROFILE="scala2.12.15"
+elif [[ "${SCALA_VERSION-}" == "2.12.18" ]]; then
+  SCALA_PROFILE="scala2.12.18"
+elif [[ "${SCALA_VERSION-}" == "2.13.8" ]]; then
+  SCALA_PROFILE="scala2.13.8"
+elif [[ "${SCALA_VERSION-}" == "2.13.17" ]]; then
+  SCALA_PROFILE="scala2.13.17"
+else
+  safe_abort "Error: Unsupported or unset SCALA_VERSION '${SCALA_VERSION}'. Supported versions are: 2.12.15, 2.12.18, 2.13.8, 2.13.17."
+fi
+
 export MAVEN_PROFILES="${SPARK_PROFILE},${SCALA_PROFILE}"
 export PROFILES_ARG="-P${MAVEN_PROFILES}"
 
