@@ -7,16 +7,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 scripts="$SCRIPT_DIR"
 root="$(dirname "$scripts")"
 
-# Helper for script exit status - handles sourced vs executed context
-safe_abort() {
-    echo "$1"
-    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-        return 1
-    else
-        exit 1
-    fi
-}
-
 if [ -e "$scripts/config.sh" ]; then
     source "$scripts/config.sh"
 fi
@@ -90,7 +80,8 @@ print_usage () {
     echo '   SCALA_CLASS=org.apache.spark.examples.SparkPi'
     echo "   CLASS_PATH=local:///opt/spark/extraFiles/spark-examples_${SCALA_BIN_VERSION:-2.13}-${SPARK_VERSION:-3.5.5}.jar"
     echo '   # Auth: Set ARMADA_AUTH_SCRIPT_PATH for authentication'
-    safe_abort "Please set the required parameters in scripts/config.sh or pass them as command line arguments."
+    echo "Please set the required parameters in scripts/config.sh or pass them as command line arguments." >&2
+    return 1 2>/dev/null || exit 1
 }
 
 while getopts "hekpi:m:P:s:c:q:M:A:ef" opt; do
@@ -297,7 +288,8 @@ elif [[ "${SPARK_VERSION-}" == "4.1.1" && "${SCALA_VERSION-}" == "2.13.17" ]]; t
   SPARK_PROFILE="spark4.1.1"
   SCALA_PROFILE="scala2.13.17"
 else
-  safe_abort "Error: Unsupported Spark/Scala version combination: Spark '${SPARK_VERSION}' with Scala '${SCALA_VERSION}'. Supported combinations are: 3.3.4/2.12.15, 3.3.4/2.13.8, 3.5.5/2.12.18, 3.5.5/2.13.8, 4.1.1/2.13.17."
+  echo "Error: Unsupported Spark/Scala version combination: Spark '${SPARK_VERSION}' with Scala '${SCALA_VERSION}'. Supported combinations are: 3.3.4/2.12.15, 3.3.4/2.13.8, 3.5.5/2.12.18, 3.5.5/2.13.8, 4.1.1/2.13.17." >&2
+  return 1 2>/dev/null || exit 1
 fi
 
 export MAVEN_PROFILES="${SPARK_PROFILE},${SCALA_PROFILE}"
@@ -306,12 +298,14 @@ export PROFILES_ARG="-P${MAVEN_PROFILES}"
 # 2. Validation
 # This now executes AFTER MAVEN_PROFILES and PROFILES_ARG are exported
 if [[ "$DEPLOY_MODE" != "client" && "$DEPLOY_MODE" != "cluster" ]]; then
-    safe_abort "Error: --mode/-M must be either 'client' or 'cluster'. Please set parameters in scripts/config.sh or pass as arguments."
+    echo "Error: --mode/-M must be either 'client' or 'cluster'. Please set parameters in scripts/config.sh or pass as arguments." >&2
+    return 1 2>/dev/null || exit 1
 fi
 
 if [[ "$ALLOCATION_MODE" != "static" && "$ALLOCATION_MODE" != "dynamic" ]]; then
-    echo "Error: --allocation/-A must be either 'static' or 'dynamic'"
-    safe_abort "Please set the required parameters in scripts/config.sh or pass them as command line arguments."
+    echo "Error: --allocation/-A must be either 'static' or 'dynamic'" >&2
+    echo "Please set the required parameters in scripts/config.sh or pass them as command line arguments." >&2
+    return 1 2>/dev/null || exit 1
 fi
 export ALLOCATION_MODE
 
@@ -350,8 +344,9 @@ if [ "$USE_DISTRIBUTED_SHUFFLE_STORAGE" = "true" ]; then
             DSS_BRANCH=${DSS_BRANCH:-fallback-storage-proactive}
             ;;
         *)
-            echo "Error: unsupported Spark/Scala combination for DSS: ${SPARK_VERSION} / ${SCALA_BIN_VERSION}"
-            safe_abort "Please set the required parameters in scripts/config.sh or pass them as command line arguments."
+            echo "Error: unsupported Spark/Scala combination for DSS: ${SPARK_VERSION} / ${SCALA_BIN_VERSION}" >&2
+            echo "Please set the required parameters in scripts/config.sh or pass them as command line arguments." >&2
+            return 1 2>/dev/null || exit 1
             ;;
     esac
     DSS_TAG=${DSS_TAG:-latest}
@@ -372,7 +367,8 @@ export CLASS_PATH="${CLASS_PATH:-local:///opt/spark/examples/jars/spark-examples
 
 # check the Spark version is supported
 if [[ ! -d "$root/src/main/scala-spark-$SPARK_BIN_VERSION" ]]; then
-  safe_abort "Unsupported Spark binary version $SPARK_BIN_VERSION. Directory not found."
+  echo "Unsupported Spark binary version $SPARK_BIN_VERSION. Directory not found." >&2
+  return 1 2>/dev/null || exit 1
 fi
 
 # Distributed shuffle storage / fallback storage conf args
