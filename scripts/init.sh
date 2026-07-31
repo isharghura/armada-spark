@@ -284,7 +284,7 @@ fi
 if [[ "${SPARK_VERSION-}" == "3.3.4" && "${SCALA_VERSION-}" == "2.12.15" ]]; then
   SPARK_PROFILE="spark3.3.4"
   SCALA_PROFILE="scala2.12.15"
-elif [[ "${SPARK_VERSION-}" == "3.3.4" && "${SCALA_VERSION-}" == "2.13.8" ]]; matching_profile=true
+elif [[ "${SPARK_VERSION-}" == "3.3.4" && "${SCALA_VERSION-}" == "2.13.8" ]]; then
   SPARK_PROFILE="spark3.3.4"
   SCALA_PROFILE="scala2.13.8"
 elif [[ "${SPARK_VERSION-}" == "3.5.5" && "${SCALA_VERSION-}" == "2.12.18" ]]; then
