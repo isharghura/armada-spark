@@ -87,8 +87,8 @@ print_usage () {
     echo '   DEPLOY_MODE=cluster'
     echo '   ALLOCATION_MODE=dynamic'
     echo '   PYTHON_SCRIPT=/opt/spark/examples/src/main/python/pi.py'
+    echo '   SCALA_CLASS=org.apache.spark.examples.SparkPi'
     echo "   CLASS_PATH=local:///opt/spark/extraFiles/spark-examples_${SCALA_BIN_VERSION:-2.13}-${SPARK_VERSION:-3.5.5}.jar"
-    echo '   CLASS_PATH=local:///opt/spark/extraFiles/spark-examples_2.12-3.5.3.jar'
     echo '   # Auth: Set ARMADA_AUTH_SCRIPT_PATH for authentication'
     safe_abort "Please set the required parameters in scripts/config.sh or pass them as command line arguments."
 }
@@ -281,22 +281,18 @@ else
 fi
 
 # 1. Compute MAVEN_PROFILES and PROFILES_ARG immediately
-if [[ "${SPARK_VERSION-}" == *"-SNAPSHOT" ]]; then
-  # Map snapshot to the base 4.1.1 profile properties for validation compatibility
-  SPARK_PROFILE="spark4.1.1"
-elif [[ "${SPARK_VERSION-}" == 3.3.* ]]; then
+if [[ "${SPARK_VERSION-}" == "3.3.4" ]]; then
   SPARK_PROFILE="spark3.3.4"
-elif [[ "${SPARK_VERSION-}" == 3.5.* ]]; then
+elif [[ "${SPARK_VERSION-}" == "3.5.5" ]]; then
   SPARK_PROFILE="spark3.5.5"
-elif [[ "${SPARK_VERSION-}" == 4.1.* ]]; then
+elif [[ "${SPARK_VERSION-}" == "4.1.1" ]]; then
   SPARK_PROFILE="spark4.1.1"
 else
-  echo "Error: Unsupported SPARK_VERSION ${SPARK_VERSION}. Please use a supported version."
-  exit 1
+  safe_abort "Error: Unsupported SPARK_VERSION '${SPARK_VERSION}'. Supported versions are: 3.3.4, 3.5.5, 4.1.1."
 fi
+
 SCALA_PROFILE="scala${SCALA_VERSION}"
 export MAVEN_PROFILES="${SPARK_PROFILE},${SCALA_PROFILE}"
-
 export PROFILES_ARG="-P${MAVEN_PROFILES}"
 
 # 2. Validation
@@ -312,8 +308,7 @@ fi
 export ALLOCATION_MODE
 
 # 3. Locate Project Root reliably
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project_root="$(cd "$script_dir/.." && pwd)"
+project_root="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # 4. Evaluate versions if not set, using the established PROFILES_ARG
 if [[ -z "${SCALA_VERSION:-}" ]]; then 
