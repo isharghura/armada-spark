@@ -280,28 +280,24 @@ else
     INCLUDE_PYTHON=true
 fi
 
-# 1 Validate Spark version and set profile
-if [[ "${SPARK_VERSION-}" == "3.3.4" ]]; then
+# 1. Validate Spark and Scala version combination and set profiles
+if [[ "${SPARK_VERSION-}" == "3.3.4" && "${SCALA_VERSION-}" == "2.12.15" ]]; then
   SPARK_PROFILE="spark3.3.4"
-elif [[ "${SPARK_VERSION-}" == "3.5.5" ]]; then
-  SPARK_PROFILE="spark3.5.5"
-elif [[ "${SPARK_VERSION-}" == "4.1.1" ]]; then
-  SPARK_PROFILE="spark4.1.1"
-else
-  safe_abort "Error: Unsupported SPARK_VERSION '${SPARK_VERSION}'. Supported versions are: 3.3.4, 3.5.5, 4.1.1."
-fi
-
-# 1.5 Validate Scala version and set profile
-if [[ "${SCALA_VERSION-}" == "2.12.15" ]]; then
   SCALA_PROFILE="scala2.12.15"
-elif [[ "${SCALA_VERSION-}" == "2.12.18" ]]; then
-  SCALA_PROFILE="scala2.12.18"
-elif [[ "${SCALA_VERSION-}" == "2.13.8" ]]; then
+elif [[ "${SPARK_VERSION-}" == "3.3.4" && "${SCALA_VERSION-}" == "2.13.8" ]]; matching_profile=true
+  SPARK_PROFILE="spark3.3.4"
   SCALA_PROFILE="scala2.13.8"
-elif [[ "${SCALA_VERSION-}" == "2.13.17" ]]; then
+elif [[ "${SPARK_VERSION-}" == "3.5.5" && "${SCALA_VERSION-}" == "2.12.18" ]]; then
+  SPARK_PROFILE="spark3.5.5"
+  SCALA_PROFILE="scala2.12.18"
+elif [[ "${SPARK_VERSION-}" == "3.5.5" && "${SCALA_VERSION-}" == "2.13.8" ]]; then
+  SPARK_PROFILE="spark3.5.5"
+  SCALA_PROFILE="scala2.13.8"
+elif [[ "${SPARK_VERSION-}" == "4.1.1" && "${SCALA_VERSION-}" == "2.13.17" ]]; then
+  SPARK_PROFILE="spark4.1.1"
   SCALA_PROFILE="scala2.13.17"
 else
-  safe_abort "Error: Unsupported or unset SCALA_VERSION '${SCALA_VERSION}'. Supported versions are: 2.12.15, 2.12.18, 2.13.8, 2.13.17."
+  safe_abort "Error: Unsupported Spark/Scala version combination: Spark '${SPARK_VERSION}' with Scala '${SCALA_VERSION}'. Supported combinations are: 3.3.4/2.12.15, 3.3.4/2.13.8, 3.5.5/2.12.18, 3.5.5/2.13.8, 4.1.1/2.13.17."
 fi
 
 export MAVEN_PROFILES="${SPARK_PROFILE},${SCALA_PROFILE}"

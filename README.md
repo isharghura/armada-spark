@@ -18,8 +18,10 @@ It provides preconfigured Docker images, tooling for efficient image management,
 export SPARK_VERSION="3.5.5"
 export SCALA_VERSION="2.13.8"
 ```
-If these variables are not set, the build scripts will fail with an error. Ensure your environment matches the supported version matrix defined in the project configuration.
-
+You can either set these environment variables individually or pass the versions directly into your command. For example:
+```bash
+mvn -Pscala2.13.8,spark3.5.5 clean package
+```
 ### Build
 
 The default build targets **Spark 3.5.5** and **Scala 2.13.8**:
