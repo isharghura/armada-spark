@@ -8,16 +8,11 @@ and [Apache Maven](https://maven.apache.org/)(3.9.6+) installed.
 You also need Docker to build the `armada-spark` container image for use with
 Armada.
 
-Clone `armada-spark` to a local directory, then run:
+Clone `armada-spark` to a local directory, then build the project:
 ```bash
-./scripts/set-version.sh 3.5.5 2.13.8
+mvn -Pscala2.13.8,spark3.5.5 clean package
 ```
 This sets up `armada-spark` to be built with Spark 3.5.5 and Scala 2.13.8.
-
-Then build with:
-```bash
-mvn clean package
-```
 
 Assuming everything built, you can then create an image to be used with
 Kubernetes with `./scripts/createImage.sh`. Here's an example:

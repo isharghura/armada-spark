@@ -20,9 +20,6 @@ jobs:
   build:
     name: Build
     uses: ./.github/workflows/build.yaml
-  build-snapshot:
-    name: Build snapshots
-    uses: ./.github/workflows/build-snapshots.yaml
   e2e:
     name: E2E
     uses: ./.github/workflows/e2e.yaml
@@ -37,7 +34,6 @@ jobs:
     needs:
       - lint
       - build
-      - build-snapshot
       - e2e
     env:
       RESULTS: ${{ join(needs.*.result, ',') }}
@@ -45,11 +41,11 @@ jobs:
     steps:
       - name: "Success"
         # we expect all required jobs to have success result
-        if: env.RESULTS == 'success,success,success,success'
+        if: env.RESULTS == 'success,success,success'
         run: true
         shell: bash
       - name: "Failure"
         # we expect all required jobs to have success result, fail otherwise
-        if: env.RESULTS != 'success,success,success,success'
+        if: env.RESULTS != 'success,success,success'
         run: false
         shell: bash

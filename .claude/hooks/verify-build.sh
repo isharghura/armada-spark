@@ -19,7 +19,7 @@ if [ -z "$BUILD_FILES" ]; then
   exit 0
 fi
 
-RESULT=$(mvn compile -q 2>&1)
+RESULT=$(mvn compile -q -P"${MAVEN_PROFILES:-spark3.5.5,scala2.13.8}" 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then
