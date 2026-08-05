@@ -101,8 +101,8 @@ runs:
     id: submit
     working-directory: armada-spark
     run: |
-      echo "::group::dev-e2e.sh"
-      ./scripts/dev-e2e.sh -q test
+      echo "::group::dev-e2e.py"
+      python3 ./scripts/dev-e2e.py
       echo "::endgroup::"
     shell: bash
     
