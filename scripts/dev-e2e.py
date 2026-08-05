@@ -201,7 +201,7 @@ def pin_single_platform_image(image):
         goarch = 'arm64'
     else:
         goarch = machine
-    goos = platform.system().lower()
+    goos = 'linux'
 
     # `docker manifest inspect` only succeeds for images backed by a registry; locally-built
     # images (e.g. IMAGE_NAME from createImage.sh) can also report an index descriptor (build
@@ -214,7 +214,8 @@ def pin_single_platform_image(image):
             manifest = json.loads(manifest_proc.stdout)
             for entry in manifest.get('manifests', []):
                 plat = entry.get('platform', {})
-                if plat.get('os') == goos and plat.get('architecture') == goarch and not plat.get('variant'):
+                variant = plat.get('variant')
+                if plat.get('os') == goos and plat.get('architecture') == goarch and variant in (None, '', 'v8'):
                     digest = entry.get('digest')
                     break
         except json.JSONDecodeError:

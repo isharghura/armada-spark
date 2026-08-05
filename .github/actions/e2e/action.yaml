@@ -102,7 +102,7 @@ runs:
     working-directory: armada-spark
     run: |
       echo "::group::dev-e2e.py"
-      python3 ./armada-spark/scripts/dev-e2e.py
+      python3 ./scripts/dev-e2e.py
       echo "::endgroup::"
     shell: bash
     
